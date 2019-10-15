@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import com.server.spring.ws.api.model.ChatMessage;
 
 @Controller
-@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin(origins = "http://localhost:8080")
 public class ChatController {
 
 	@MessageMapping("/chat.register")

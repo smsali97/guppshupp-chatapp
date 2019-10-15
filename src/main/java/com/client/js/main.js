@@ -37,7 +37,7 @@ function onConnected() {
     stompClient.subscribe('/topic/public', onMessageReceived);
 
     // Tell your username to the server
-    stompClient.send("/app/chat.addUser",
+    stompClient.send("/app/chat.register",
         {},
         JSON.stringify({sender: username, type: 'JOIN'})
     )
@@ -60,7 +60,7 @@ function sendMessage(event) {
             content: messageInput.value,
             type: 'CHAT'
         };
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+        stompClient.send("/app/chat.send", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
     }
     event.preventDefault();
@@ -97,7 +97,7 @@ function onMessageReceived(payload) {
     var textElement = document.createElement('p');
     var messageText = document.createTextNode(message.content);
     textElement.appendChild(messageText);
-
+    console.log(messageText);
     messageElement.appendChild(textElement);
 
     messageArea.appendChild(messageElement);
@@ -112,7 +112,7 @@ function getAvatarColor(messageSender) {
     }
     var index = Math.abs(hash % colors.length);
     return colors[index];
-}
+} 
 
 usernameForm.addEventListener('submit', connect, true)
 messageForm.addEventListener('submit', sendMessage, true)
