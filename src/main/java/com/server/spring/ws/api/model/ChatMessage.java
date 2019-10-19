@@ -1,14 +1,20 @@
 package com.server.spring.ws.api.model;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "chat_message")
@@ -19,15 +25,19 @@ public class ChatMessage {
 	
 	private String content;
 	
-	@OneToMany(mappedBy = "chat_message")
+	@OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "chat_message")
 	private User sender;
 	
-	private LocalDateTime timestamp;
-	DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy.MM.dd hh:mm:ss");
+	@Column(nullable = false, updatable = false)
+	@CreationTimestamp
+	private Date timestamp;
+	
 	private MessageType type;
 
 	public enum MessageType {
-		CHAT, LEAVE, JOIN
+		CHAT, LEAVE, JOIN, IMAGE, STICKER
 	}
 
 	public String getContent() {
@@ -38,9 +48,6 @@ public class ChatMessage {
 		this.content = content;
 	}
 
-	public String getSender() {
-		return sender;
-	}
 	
 	public void setId(Long id) {
 		this.id = id;
@@ -50,8 +57,12 @@ public class ChatMessage {
 		return id;
 	}
 
-	public void setSender(String sender) {
+	public void setSender(User sender) {
 		this.sender = sender;
+	}
+	
+	public User getSender() {
+		return sender;
 	}
 
 	public MessageType getType() {
@@ -62,11 +73,11 @@ public class ChatMessage {
 		this.type = type;
 	}
 	
-	public void setTimestamp(LocalDateTime timestamp) {
+	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
 	
-	public LocalDateTime getTimestamp() {
+	public Date getTimestamp() {
 		return timestamp;
 	}
 

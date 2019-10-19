@@ -11,6 +11,8 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.server.spring.ws.api.model.ChatMessage;
+import com.server.spring.ws.api.model.User;
+import com.server.spring.ws.api.model.UserRepositoryImpl;
 
 @Component
 public class WebSocketEventListener {
@@ -19,6 +21,9 @@ public class WebSocketEventListener {
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
+    
+    @Autowired
+    private UserRepositoryImpl userRepository;
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -34,12 +39,14 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
         String username = (String) headerAccessor.getSessionAttributes().get("username");
-        if(username != null) {
+      
+        User user = userRepository.findById(username).get();
+        if(user != null) {
             logger.info("User Disconnected : " + username);
 
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(ChatMessage.MessageType.LEAVE);
-            chatMessage.setSender(username);
+            chatMessage.setSender(user);
 
             messagingTemplate.convertAndSend("/topic/public", chatMessage);
         }
