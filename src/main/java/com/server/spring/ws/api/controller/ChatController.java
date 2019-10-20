@@ -1,5 +1,7 @@
 package com.server.spring.ws.api.controller;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -33,6 +35,8 @@ public class ChatController {
 		
 		ChatMessage cm = new ChatMessage();
 		cm.setSender(user);
+		cm.setTimestamp(new Date());
+		cm.setContent(user.getUsername() + " just joined the chat!");
 		cm.setType(MessageType.JOIN);
 		
 		return cm;
@@ -44,6 +48,9 @@ public class ChatController {
 	@SendTo("/topic/public")
 	public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
 		System.out.println(chatMessage.getContent());
+		
+		chatMessage.setDelivered(true);
+		chatMessage.setTimestamp(new Date());
 		
 		return chatMessage;
 	}

@@ -1,20 +1,18 @@
 package com.server.spring.ws.api.model;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "chat_message")
@@ -28,15 +26,25 @@ public class ChatMessage {
 	@OneToOne
 	private User sender;
 	
-	@OneToOne
+	@OneToOne(optional=true)
 	private User receiver;
 	
-	@Column(nullable = false, updatable = false)
-	@CreationTimestamp
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd/MM/yy")
 	private Date timestamp;
 	
 	private MessageType type;
-
+	
+	
+	private boolean delivered;
+	
+	public void setDelivered(boolean delivered) {
+		this.delivered = delivered;
+	}
+	
+	public boolean isDelivered() {
+		return delivered;
+	}
+	
 	public enum MessageType {
 		CHAT, LEAVE, JOIN, IMAGE, STICKER
 	}

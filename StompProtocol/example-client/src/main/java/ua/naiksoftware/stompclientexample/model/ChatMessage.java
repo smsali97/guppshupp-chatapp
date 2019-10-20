@@ -11,9 +11,19 @@ public class ChatMessage  {
 
     private User receiver;
 
-    private Date timestamp;
+    private String timestamp;
 
     private MessageType type;
+
+    private boolean delivered = false;
+
+    public void setDelivered(boolean delivered) {
+        this.delivered = delivered;
+    }
+
+    public boolean isDelivered() {
+        return delivered;
+    }
 
     public enum MessageType {
         CHAT, LEAVE, JOIN, IMAGE, STICKER
@@ -61,11 +71,11 @@ public class ChatMessage  {
         this.type = type;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
-    public Date getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
