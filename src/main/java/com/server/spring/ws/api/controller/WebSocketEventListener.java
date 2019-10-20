@@ -12,7 +12,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.server.spring.ws.api.model.ChatMessage;
 import com.server.spring.ws.api.model.User;
-import com.server.spring.ws.api.model.UserRepositoryImpl;
+import com.server.spring.ws.api.model.UserRepository;
 
 @Component
 public class WebSocketEventListener {
@@ -23,7 +23,7 @@ public class WebSocketEventListener {
     private SimpMessageSendingOperations messagingTemplate;
     
     @Autowired
-    private UserRepositoryImpl userRepository;
+    private UserRepository userRepository;
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -33,22 +33,28 @@ public class WebSocketEventListener {
     public static void endpointCreated() {
     	logger.info("Endpoint created");
     }
+    
+    public static void userCreated(String u) {
+    	logger.info(u + " created");
+    }
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+    	
+    	logger.warn(event.getMessage().toString());
+//        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
-        String username = (String) headerAccessor.getSessionAttributes().get("username");
-      
-        User user = userRepository.findById(username).get();
-        if(user != null) {
-            logger.info("User Disconnected : " + username);
-
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(ChatMessage.MessageType.LEAVE);
-            chatMessage.setSender(user);
-
-            messagingTemplate.convertAndSend("/topic/public", chatMessage);
-        }
+//        String username = (String) headerAccessor.getSessionAttributes().get("username");
+//      
+//        User user = userRepository.findById(username).get();
+//        if(user != null) {
+//            logger.info("User Disconnected : " + username);
+//
+//            ChatMessage chatMessage = new ChatMessage();
+//            chatMessage.setType(ChatMessage.MessageType.LEAVE);
+//            chatMessage.setSender(user);
+//
+//            messagingTemplate.convertAndSend("/topic/public", chatMessage);
+//        }
     }
 }

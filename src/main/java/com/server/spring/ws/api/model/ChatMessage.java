@@ -1,8 +1,7 @@
 package com.server.spring.ws.api.model;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,10 +25,11 @@ public class ChatMessage {
 	
 	private String content;
 	
-	@OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "chat_message")
+	@OneToOne
 	private User sender;
+	
+	@OneToOne
+	private User receiver;
 	
 	@Column(nullable = false, updatable = false)
 	@CreationTimestamp
@@ -64,10 +65,19 @@ public class ChatMessage {
 	public User getSender() {
 		return sender;
 	}
-
+	
+	public void setReceiver(User receiver) {
+		this.receiver = receiver;
+	}
+	
+	public User getReceiver() {
+		return receiver;
+	}
+	
 	public MessageType getType() {
 		return type;
 	}
+
 
 	public void setType(MessageType type) {
 		this.type = type;
