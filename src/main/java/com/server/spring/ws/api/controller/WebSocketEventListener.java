@@ -11,6 +11,7 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.server.spring.ws.api.model.ChatMessage;
+import com.server.spring.ws.api.model.ChatRepository;
 import com.server.spring.ws.api.model.User;
 import com.server.spring.ws.api.model.UserRepository;
 
@@ -25,9 +26,21 @@ public class WebSocketEventListener {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ChatRepository chatRepository;
+    
+    @Autowired
+    private ChatController chatController;
+    
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         logger.info("Received a new web socket connection");
+        
+        chatRepository.findAll().forEach(chatMessage -> {
+        	chatController.sendMessage(chatMessage);
+        });
+        
+        
     }
     
     public static void endpointCreated() {
