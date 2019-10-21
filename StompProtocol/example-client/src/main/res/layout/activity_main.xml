@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:clipToPadding="false"
     android:focusableInTouchMode="true"
-    tools:context="ua.naiksoftware.stompclientexample.MainActivity">
+    tools:context="ua.naiksoftware.stompclientexample.GroupChatActivity">
 
     <ListView
         android:layout_width="match_parent"

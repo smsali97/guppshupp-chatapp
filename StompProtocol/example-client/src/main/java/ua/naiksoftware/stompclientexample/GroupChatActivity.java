@@ -5,48 +5,47 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import io.reactivex.schedulers.Schedulers;
 import ua.naiksoftware.R;
-import ua.naiksoftware.stomp.Stomp;
-import ua.naiksoftware.stomp.StompClient;
-import ua.naiksoftware.stomp.dto.StompHeader;
 import ua.naiksoftware.stompclientexample.model.ChatMessage;
 import ua.naiksoftware.stompclientexample.model.User;
 
+import static ua.naiksoftware.stompclientexample.util.ChatUtil.ANDROID_EMULATOR_LOCALHOST;
+import static ua.naiksoftware.stompclientexample.util.ChatUtil.SERVER_PORT;
+import static ua.naiksoftware.stompclientexample.util.ChatUtil.currentUsername;
+import static ua.naiksoftware.stompclientexample.util.ChatUtil.mStompClient;
 
 
-public class MainActivity extends AppCompatActivity {
+public class GroupChatActivity extends AppCompatActivity {
 
     EditText editText;
-    StompClient mStompClient;
 
-    public static final String ANDROID_EMULATOR_LOCALHOST = "10.0.2.2";
-    public static final String SERVER_PORT = "8080";
-
-    public static String currentUsername = "smsali97";
-    public static int ctr = 0;
 
     private ListView messagesView;
     ChatMessageAdapter messageAdapter;
@@ -61,41 +60,44 @@ public class MainActivity extends AppCompatActivity {
         // This is where we write the mesage
         editText = (EditText) findViewById(R.id.editText);
 
-        mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://" + ANDROID_EMULATOR_LOCALHOST
-                + ":" + SERVER_PORT + "/ws/websocket");
-
-        mStompClient.lifecycle().subscribe(lifecycleEvent -> {
-            switch (lifecycleEvent.getType()) {
-
-                case OPENED:
-                    Log.d("TAG", "Stomp connection opened");
-                    break;
-
-                case ERROR:
-                    Log.e("TAG", "Error", lifecycleEvent.getException());
-                    break;
-
-                case CLOSED:
-                    Log.d("TAG", "Stomp connection closed");
-                    break;
-            }
-        });
-
-        mStompClient.connect();
-
-        User user1 = new User();
-        user1.setUsername("mmaazt");
-        user1.setPassword("abc123");
-        User user2 = new User();
-        user2.setUsername("smsali97");
-        user2.setPassword("abc123");
-        mStompClient.send("/app/chat.register", new Gson().toJson(user1)).subscribe();
-        mStompClient.send("/app/chat.register", new Gson().toJson(user2)).subscribe();
 
         messageAdapter = new ChatMessageAdapter(this);
         messagesView = (ListView) findViewById(R.id.messages_view);
         messagesView.setAdapter(messageAdapter);
         editText = (EditText) findViewById(R.id.editText);
+
+        String url = "http://" + ANDROID_EMULATOR_LOCALHOST + ":" + SERVER_PORT + "/chatMessages/public";
+
+        StringRequest MyStringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                ChatMessage[] messages = new Gson().fromJson(response, ChatMessage[].class);
+
+                for (ChatMessage message: messages) {
+                    messageAdapter.add(message);
+                    // scroll the ListView to the last added element
+                    messagesView.setSelection(messagesView.getCount() - 1);
+                }
+
+            }
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast unsucmsg= Toast.makeText( getApplicationContext(), "Couldn't load previous messages!", Toast.LENGTH_SHORT);
+                unsucmsg.show();
+            }
+
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> MyData = new HashMap<>();
+                return MyData;
+            }
+        };
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+        MyRequestQueue.add(MyStringRequest);
+
+
         mStompClient.topic("/topic/public")
                 .subscribe((message) -> {
                     runOnUiThread(new Runnable() {
@@ -126,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
         User user = new User();
         user.setUsername(currentUsername);
 
-        user.setPassword("abc123");
 
         message.setSender(user);
         message.setContent(editText.getText().toString());
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         message.setTimestamp(df.format(new Date()));
         editText.getText().clear();
 
-        Log.d("ch",new Gson().toJson(message));
+        Log.d("PUBLIC-CHAT-MESSAGE",new Gson().toJson(message));
 
         mStompClient.send("/app/chat.send", new Gson().toJson(message)).subscribe();
 
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             ImageView jigar, yaar, lush, oye, scene_on_hai, chill_karo, my_image;
 
-            LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) GroupChatActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View layout = inflater.inflate(R.layout.popup, null);
             window = new PopupWindow(layout, 910, 850, true);
 
@@ -254,6 +255,11 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
 
         }
+    }
+
+    public static void getPublicChatMessages(ChatMessageAdapter messageAdapter, ListView messagesView) {
+
+
     }
 
 }

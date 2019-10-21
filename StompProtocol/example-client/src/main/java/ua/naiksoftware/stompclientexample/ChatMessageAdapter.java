@@ -14,13 +14,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import ua.naiksoftware.R;
 import ua.naiksoftware.stompclientexample.model.ChatMessage;
+import ua.naiksoftware.stompclientexample.util.ChatUtil;
 
 public class ChatMessageAdapter  extends BaseAdapter {
 
@@ -58,7 +57,7 @@ public class ChatMessageAdapter  extends BaseAdapter {
             LayoutInflater messageInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             ChatMessage message = messages.get(i);
 
-            if (message.getSender().getUsername().equals(MainActivity.currentUsername)) { // this message was sent by us so let's create a basic chat bubble on the right
+            if (message.getSender().getUsername().equals(ChatUtil.currentUsername)) { // this message was sent by us so let's create a basic chat bubble on the right
                 convertView = messageInflater.inflate(R.layout.my_message, null);
                 holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);
                 convertView.setTag(holder);

@@ -34,8 +34,7 @@ public class ChatMessage {
 	
 	private MessageType type;
 	
-	
-	private boolean delivered;
+	private Boolean delivered = false;
 	
 	public void setDelivered(boolean delivered) {
 		this.delivered = delivered;

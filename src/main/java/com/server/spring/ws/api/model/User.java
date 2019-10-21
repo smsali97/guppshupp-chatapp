@@ -1,5 +1,6 @@
 package com.server.spring.ws.api.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -8,6 +9,7 @@ import javax.persistence.Table;
 @Table(name = "user")
 public class User {
 	
+	@Column(length = 50)
 	@Id
 	private String username;
 

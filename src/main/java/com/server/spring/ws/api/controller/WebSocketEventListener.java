@@ -36,9 +36,9 @@ public class WebSocketEventListener {
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         logger.info("Received a new web socket connection");
         
-        chatRepository.findAll().forEach(chatMessage -> {
-        	chatController.sendMessage(chatMessage);
-        });
+//        chatRepository.findAll().forEach(chatMessage -> {
+//        	chatController.sendMessage(chatMessage);
+//        });
         
         
     }
