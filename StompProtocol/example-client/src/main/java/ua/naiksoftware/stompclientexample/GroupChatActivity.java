@@ -3,6 +3,7 @@ package ua.naiksoftware.stompclientexample;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferService;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -52,6 +54,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private PopupWindow window;
     private String TAG = "Main Activity";
+    S3Services s3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +62,7 @@ public class GroupChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // This is where we write the mesage
         editText = (EditText) findViewById(R.id.editText);
-
+        s3 = new S3Services(getApplication());
 
         messageAdapter = new ChatMessageAdapter(this);
         messagesView = (ListView) findViewById(R.id.messages_view);
