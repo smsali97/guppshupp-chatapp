@@ -17,6 +17,8 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferType;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.auth.BasicAWSCredentials;
+
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,14 +33,16 @@ public class S3Services {
 
     TransferUtility transferUtility;
 
-    public S3Services(Context context) {
+    public S3Services(Context context,String KEY,String SECRET) {
         myContext = context;
         myContext.getApplicationContext().startService(new Intent(myContext.getApplicationContext(), TransferService.class));
+        BasicAWSCredentials credentials = new BasicAWSCredentials(KEY, SECRET);
+        AmazonS3Client s3Client = new AmazonS3Client(credentials);
         transferUtility =
                 TransferUtility.builder()
                         .context(myContext.getApplicationContext())
                         .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-                        .s3Client(new AmazonS3Client(AWSMobileClient.getInstance()))
+                        .s3Client(s3Client)
                         .build();
     }
 
