@@ -3,6 +3,7 @@ package ua.naiksoftware.stompclientexample;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferService;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.amazonaws.services.s3.AmazonS3Client;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,11 +37,13 @@ import ua.naiksoftware.R;
 import ua.naiksoftware.stompclientexample.model.ChatMessage;
 import ua.naiksoftware.stompclientexample.model.User;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
+
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.ANDROID_EMULATOR_LOCALHOST;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.SERVER_PORT;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.currentUsername;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.mStompClient;
-
+import java.io.File;
 
 public class GroupChatActivity extends AppCompatActivity {
 
@@ -49,7 +54,12 @@ public class GroupChatActivity extends AppCompatActivity {
     ChatMessageAdapter messageAdapter;
 
     private PopupWindow window;
+<<<<<<< HEAD
     private String TAG = "PUBLIC-CHAT";
+=======
+    private String TAG = "Main Activity";
+    S3Services s3;
+>>>>>>> f00b305b48a8e95f40bf8bd1ee33926ab0ad0e11
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +67,12 @@ public class GroupChatActivity extends AppCompatActivity {
         setContentView(R.layout.group_chat);
         // This is where we write the mesage
         editText = (EditText) findViewById(R.id.editText);
+        AWSMobileClient.getInstance().initialize(this).execute();
 
+        s3 = new S3Services(getApplication(),"","");
+
+        File file = new File(".\\LICENSE");
+        s3.upload(file);
 
         messageAdapter = new ChatMessageAdapter(this);
         messagesView = (ListView) findViewById(R.id.messages_view);
