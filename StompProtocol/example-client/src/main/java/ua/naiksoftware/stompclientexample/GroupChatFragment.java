@@ -1,7 +1,5 @@
 package ua.naiksoftware.stompclientexample;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -10,12 +8,15 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,8 +40,7 @@ import static ua.naiksoftware.stompclientexample.util.ChatUtil.SERVER_PORT;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.currentUsername;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.mStompClient;
 
-
-public class GroupChatActivity extends AppCompatActivity {
+public class GroupChatFragment extends Fragment {
 
     EditText editText;
 
@@ -49,64 +49,45 @@ public class GroupChatActivity extends AppCompatActivity {
     ChatMessageAdapter messageAdapter;
 
     private PopupWindow window;
+    private  ImageButton messageButton;
+    private  ImageButton fileButton;
+    private  ImageButton stickerButton;
     private String TAG = "PUBLIC-CHAT";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.group_chat);
-        // This is where we write the mesage
-        editText = (EditText) findViewById(R.id.editText);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.group_chat, container, false);
 
-
-        messageAdapter = new ChatMessageAdapter(this);
-        messagesView = (ListView) findViewById(R.id.messages_view);
+        editText = (EditText) v.findViewById(R.id.editText);
+        messageButton = (ImageButton) v.findViewById(R.id.send_button);
+        fileButton = (ImageButton) v.findViewById(R.id.file_button);
+        stickerButton = (ImageButton) v.findViewById(R.id.sticker_button);
+        messageAdapter = new ChatMessageAdapter(v.getContext());
+        messagesView = (ListView) v.findViewById(R.id.messages_view);
         messagesView.setAdapter(messageAdapter);
-        editText = (EditText) findViewById(R.id.editText);
+        editText = (EditText) v.findViewById(R.id.editText);
 
-        String url = "http://" + ANDROID_EMULATOR_LOCALHOST + ":" + SERVER_PORT + "/chatMessages/public";
+        getPreviousMessages();
+        subscribeOncomingMessages();
 
-        StringRequest MyStringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
+        messageButton.setOnClickListener(this::sendMessage);
+        stickerButton.setOnClickListener(this::ShowPopupWindow);
 
-                ChatMessage[] messages = new Gson().fromJson(response, ChatMessage[].class);
+        return v;
+    }
 
-                for (ChatMessage message: messages) {
-                    messageAdapter.add(message);
-                    // scroll the ListView to the last added element
-                    messagesView.setSelection(messagesView.getCount() - 1);
-                }
-
-            }
-        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast unsucmsg= Toast.makeText( getApplicationContext(), "Couldn't load previous messages!", Toast.LENGTH_SHORT);
-                unsucmsg.show();
-            }
-
-        }) {
-            protected Map<String, String> getParams() {
-                Map<String, String> MyData = new HashMap<>();
-                return MyData;
-            }
-        };
-        RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
-        MyRequestQueue.add(MyStringRequest);
-
-
+    private void subscribeOncomingMessages() {
         mStompClient.topic("/topic/public")
                 .subscribe((message) -> {
-                    runOnUiThread(new Runnable() {
+                    getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             String json = message.getPayload();
-                            Log.d("PAYLOAD",json);
+                            Log.d("PAYLOAD", json);
 
-                            ChatMessage cm = new Gson().fromJson(json,ChatMessage.class);
+                            ChatMessage cm = new Gson().fromJson(json, ChatMessage.class);
 
-                            if (cm.getType().equals(ChatMessage.MessageType.LEAVE) ) return;
+                            if (cm.getType().equals(ChatMessage.MessageType.LEAVE)) return;
                             if (cm.getTimestamp() == null) {
                                 SimpleDateFormat df = new SimpleDateFormat("HH:mm dd/MM/yy");
                                 cm.setTimestamp(df.format(new Date()));
@@ -116,9 +97,42 @@ public class GroupChatActivity extends AppCompatActivity {
                             messagesView.setSelection(messagesView.getCount() - 1);
                         }
                     });
-        });
-
+                });
     }
+
+    private void getPreviousMessages() {
+        String url = "http://" + ANDROID_EMULATOR_LOCALHOST + ":" + SERVER_PORT + "/chatMessages/public";
+
+        StringRequest MyStringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                ChatMessage[] messages = new Gson().fromJson(response, ChatMessage[].class);
+
+                for (ChatMessage message : messages) {
+                    messageAdapter.add(message);
+                    // scroll the ListView to the last added element
+                    messagesView.setSelection(messagesView.getCount() - 1);
+                }
+
+            }
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast unsucmsg = Toast.makeText(getContext(), "Couldn't load previous messages!", Toast.LENGTH_SHORT);
+                unsucmsg.show();
+            }
+
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> MyData = new HashMap<>();
+                return MyData;
+            }
+        };
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(getContext());
+        MyRequestQueue.add(MyStringRequest);
+    }
+
 
     public void sendMessage(View view) {
 
@@ -143,7 +157,7 @@ public class GroupChatActivity extends AppCompatActivity {
         try {
             ImageView jigar, yaar, lush, oye, scene_on_hai, chill_karo, my_image;
 
-            LayoutInflater inflater = (LayoutInflater) GroupChatActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View layout = inflater.inflate(R.layout.popup, null);
             window = new PopupWindow(layout, 910, 850, true);
 
@@ -255,3 +269,4 @@ public class GroupChatActivity extends AppCompatActivity {
 
 
 }
+

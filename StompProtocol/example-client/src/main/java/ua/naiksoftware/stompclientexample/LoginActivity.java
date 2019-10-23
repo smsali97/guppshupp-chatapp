@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                     sucmsg.show();
 
                     ChatUtil.currentUsername = uname;
-                    Intent intent = new Intent(LoginActivity.this, GroupChatActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
                     startActivity(intent);
                     finish();
                 }

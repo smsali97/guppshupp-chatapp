@@ -1,6 +1,5 @@
 package com.server.spring.ws.api.controller;
 
-import java.awt.PageAttributes.MediaType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,8 +50,8 @@ public class ChatController {
 		return cm;
 	}
 	
-	@MessageMapping("/chat.send")
 	@SendTo("/topic/public")
+	@MessageMapping("/chat.send")
 	public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
 		
 		chatMessage.setDelivered(true);
@@ -61,8 +59,25 @@ public class ChatController {
 		
 		ChatMessage newChatMessage = chatRepository.save(chatMessage);
 		
+//		if (chatMessage.getReceiver() != null) {
+//			return sendToPrivate(newChatMessage);
+//		}
+//		else {
+//			return sendToPublic(newChatMessage);
+//		}
 		
 		return newChatMessage;
+		
+	}
+	
+	@SendTo("/topic/public")
+	public ChatMessage sendToPublic(ChatMessage chatMessage ) {
+		return chatMessage;
+	}
+	
+	@SendTo("/topic/private")
+	public ChatMessage sendToPrivate(ChatMessage chatMessage ) {
+		return chatMessage;
 	}
 	
 	@RequestMapping(value = "/checkPassword", method = RequestMethod.POST)
@@ -100,7 +115,7 @@ public class ChatController {
 		ArrayList<ChatMessage> list = new ArrayList<ChatMessage>();
 		
 		chatRepository.findAll().forEach( chat -> {
-				if (chat.getReceiver() == null) {
+				if (chat.getReceiver() == null && !chat.getType().equals(MessageType.JOIN)) {
 					list.add(chat);
 				}
 		});

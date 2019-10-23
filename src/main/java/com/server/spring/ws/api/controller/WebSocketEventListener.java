@@ -19,27 +19,10 @@ import com.server.spring.ws.api.model.UserRepository;
 public class WebSocketEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-
-    @Autowired
-    private SimpMessageSendingOperations messagingTemplate;
-    
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ChatRepository chatRepository;
-    
-    @Autowired
-    private ChatController chatController;
     
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info("Received a new web socket connection");
-        
-//        chatRepository.findAll().forEach(chatMessage -> {
-//        	chatController.sendMessage(chatMessage);
-//        });
-        
+        logger.info("Received a new web socket connection");        
         
     }
     
@@ -55,19 +38,6 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
     	
     	logger.warn(event.getMessage().toString());
-//        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-
-//        String username = (String) headerAccessor.getSessionAttributes().get("username");
-//      
-//        User user = userRepository.findById(username).get();
-//        if(user != null) {
-//            logger.info("User Disconnected : " + username);
-//
-//            ChatMessage chatMessage = new ChatMessage();
-//            chatMessage.setType(ChatMessage.MessageType.LEAVE);
-//            chatMessage.setSender(user);
-//
-//            messagingTemplate.convertAndSend("/topic/public", chatMessage);
-//        }
+        
     }
 }
