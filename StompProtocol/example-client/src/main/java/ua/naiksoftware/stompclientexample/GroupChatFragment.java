@@ -1,9 +1,14 @@
 package ua.naiksoftware.stompclientexample;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,6 +32,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +43,7 @@ import ua.naiksoftware.R;
 import ua.naiksoftware.stompclientexample.model.ChatMessage;
 import ua.naiksoftware.stompclientexample.model.User;
 
+import static android.app.Activity.RESULT_OK;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.ANDROID_EMULATOR_LOCALHOST;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.SERVER_PORT;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.currentUsername;
@@ -43,6 +52,8 @@ import static ua.naiksoftware.stompclientexample.util.ChatUtil.mStompClient;
 public class GroupChatFragment extends Fragment {
 
     EditText editText;
+
+    private static int CHOOSING_IMAGE_REQUEST = 1234;
 
 
     private ListView messagesView;
@@ -54,9 +65,16 @@ public class GroupChatFragment extends Fragment {
     private  ImageButton stickerButton;
     private String TAG = "PUBLIC-CHAT";
 
+
+    private Uri fileUri;
+    S3Services s3;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.group_chat, container, false);
+        AWSMobileClient.getInstance().initialize(this.getContext()).execute();
+
+        s3 = new S3Services(this.getContext(),"AKIA47LH6J6I7EJAREGG","3j5ObIgtwO7RHRhvmFlqPMBc1pZLrZ18CphPkQPB");
 
         editText = (EditText) v.findViewById(R.id.editText);
         messageButton = (ImageButton) v.findViewById(R.id.send_button);
@@ -72,7 +90,7 @@ public class GroupChatFragment extends Fragment {
 
         messageButton.setOnClickListener(this::sendMessage);
         stickerButton.setOnClickListener(this::ShowPopupWindow);
-
+        fileButton.setOnClickListener(this::onClick);
         return v;
     }
 
@@ -265,6 +283,41 @@ public class GroupChatFragment extends Fragment {
         }catch (Exception e){
 
         }
+    }
+
+
+    private void showChoosingFile() {
+        Intent intent = new Intent();
+        intent.setType("image/*, pdf/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        //intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        startActivityForResult(Intent.createChooser(intent, "Select File"),  CHOOSING_IMAGE_REQUEST);
+    }
+
+    public void onClick(View view) {
+        int i = view.getId();
+
+        if (i == R.id.file_button) {
+            showChoosingFile();
+//        } else if (i == R.id.btn_upload) {
+//            uploadFile();
+//        } else if (i == R.id.btn_download) {
+//            downloadFile();
+//        }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CHOOSING_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            fileUri = data.getData();
+            File file = new File(fileUri.getPath());//create path from uri
+
+            s3.upload(file);
+        }
+
     }
 
 

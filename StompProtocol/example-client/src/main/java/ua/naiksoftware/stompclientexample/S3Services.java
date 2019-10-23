@@ -57,7 +57,6 @@ public class S3Services {
     }
 
     public void upload(File file, String bucket) {
-
         TransferObserver uploadObserver = transferUtility.upload(
                             bucket,
                             file.getName()

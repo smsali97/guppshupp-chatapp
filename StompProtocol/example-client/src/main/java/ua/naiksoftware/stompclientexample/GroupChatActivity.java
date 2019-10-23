@@ -54,12 +54,9 @@ public class GroupChatActivity extends AppCompatActivity {
     ChatMessageAdapter messageAdapter;
 
     private PopupWindow window;
-<<<<<<< HEAD
     private String TAG = "PUBLIC-CHAT";
-=======
-    private String TAG = "Main Activity";
+//    private String TAG = "Main Activity";
     S3Services s3;
->>>>>>> f00b305b48a8e95f40bf8bd1ee33926ab0ad0e11
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

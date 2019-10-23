@@ -22,5 +22,11 @@
     "Default": {
       "Region": "us-east-1"
     }
+  },
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "appcon-storage",
+      "Region": "us-east-1"
+    }
   }
 }
