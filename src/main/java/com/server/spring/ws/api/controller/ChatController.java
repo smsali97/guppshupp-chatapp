@@ -59,25 +59,22 @@ public class ChatController {
 		
 		ChatMessage newChatMessage = chatRepository.save(chatMessage);
 		
-//		if (chatMessage.getReceiver() != null) {
-//			return sendToPrivate(newChatMessage);
-//		}
-//		else {
-//			return sendToPublic(newChatMessage);
-//		}
-		
 		return newChatMessage;
 		
 	}
 	
-	@SendTo("/topic/public")
-	public ChatMessage sendToPublic(ChatMessage chatMessage ) {
-		return chatMessage;
-	}
+	
 	
 	@SendTo("/topic/private")
+	@MessageMapping("/chat.send-private")
 	public ChatMessage sendToPrivate(ChatMessage chatMessage ) {
-		return chatMessage;
+		chatMessage.setDelivered(true);
+		chatMessage.setTimestamp(new Date());
+		
+		ChatMessage newChatMessage = chatRepository.save(chatMessage);
+		
+		
+		return newChatMessage;
 	}
 	
 	@RequestMapping(value = "/checkPassword", method = RequestMethod.POST)
@@ -96,16 +93,13 @@ public class ChatController {
 		return hm;
 	}
 	
-	@RequestMapping(value = "/checkUsername", method = RequestMethod.POST)
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String,String> isValid( @RequestParam String username) {
+	public User getUser( @RequestParam String username) {
 		
 		Optional<User> opt =userRepository.findById(username);
 		
-		HashMap<String, String> hm = new HashMap<String, String>();
-		hm.put("success", String.valueOf(opt.isPresent() ));
-		
-		return hm;
+		return opt.isPresent() ? opt.get() : null;
 	}
 	
 	@RequestMapping(value = "/chatMessages/public", method = RequestMethod.GET)
@@ -123,15 +117,18 @@ public class ChatController {
 		return list;
 	}
 	
-	@RequestMapping(value = "/chatMessages/private", method = RequestMethod.GET)
+	@RequestMapping(value = "/chatMessages/private", method = RequestMethod.POST)
 	@ResponseBody
-	public List<ChatMessage> getPrivateChatMessages(@RequestParam String sender) {
+	public List<ChatMessage> getPrivateChatMessages(@RequestParam String user1, @RequestParam String user2 ) {
 		
 		ArrayList<ChatMessage> list = new ArrayList<ChatMessage>();
 		
 		chatRepository.findAll().forEach( chat -> {
-				if (chat.getReceiver() != null && chat.getReceiver().getUsername().equals(sender)) {
-					list.add(chat);
+				if (chat.getReceiver() != null) {
+					if ( (chat.getSender().getUsername().equals(user1) && chat.getReceiver().getUsername().equals(user2)) 
+							|| (chat.getSender().getUsername().equals(user2) && chat.getReceiver().getUsername().equals(user1)) ) {
+						list.add(chat);
+					}
 				}
 		});
 		

@@ -69,7 +69,7 @@ public class GroupChatActivity extends AppCompatActivity {
         s3 = new S3Services(getApplication(),"","");
 
         File file = new File(".\\LICENSE");
-        s3.upload(file);
+//        s3.upload(file);
 
         messageAdapter = new ChatMessageAdapter(this);
         messagesView = (ListView) findViewById(R.id.messages_view);

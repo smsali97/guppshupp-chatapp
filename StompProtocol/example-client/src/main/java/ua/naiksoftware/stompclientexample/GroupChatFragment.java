@@ -194,7 +194,6 @@ public class GroupChatFragment extends Fragment {
             ChatMessage message = new ChatMessage();
             User user = new User();
             user.setUsername(currentUsername);
-            user.setPassword("abc123");
             message.setSender(user);
 
             jigar.setOnClickListener(new View.OnClickListener() {
