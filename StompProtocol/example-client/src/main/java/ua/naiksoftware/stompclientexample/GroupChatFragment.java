@@ -286,11 +286,20 @@ public class GroupChatFragment extends Fragment {
 
 
     private void showChoosingFile() {
-        Intent intent = new Intent();
+        /*Intent intent = new Intent();
         intent.setType("image/*, pdf/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_GET_CONTENT);*/
         //intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        startActivityForResult(Intent.createChooser(intent, "Select File"),  CHOOSING_IMAGE_REQUEST);
+        Intent intent = new Intent(this.getContext(), FilePickerActivity.class);
+        intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
+                .setCheckPermission(true)
+                .setShowImages(true)
+                .enableImageCapture(true)
+                .setMaxSelection(1)
+                .setSkipZeroSizeFiles(true)
+                .build());
+        startActivityForResult(intent, CHOOSING_IMAGE_REQUEST);
+        //startActivityForResult(Intent.createChooser(intent, "Select File"),  CHOOSING_IMAGE_REQUEST);
     }
 
     public void onClick(View view) {
@@ -311,10 +320,12 @@ public class GroupChatFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CHOOSING_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            fileUri = data.getData();
-            File file = new File(fileUri.getPath());//create path from uri
+            ArrayList<MediaFile> files = data.getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES);
+            Log.d("File picker result",  files.size() + "");
+            //fileUri = data.getData();
+            //File file = new File(fileUri.getPath());//create path from uri
 
-            s3.upload(file);
+            //s3.upload(file);
         }
 
     }
