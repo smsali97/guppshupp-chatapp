@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">guppshppappcon-env.2ie7thu7d2.eu-central-1.elasticbeanstalk.com</domain>
+        <domain includeSubdomains="true">guppshupp.eu-central-1.elasticbeanstalk.com</domain>
         <domain includeSubdomains="true">10.0.2.2</domain>
             <domain includeSubdomains="true">localhost</domain>
-
     </domain-config>
 </network-security-config>
