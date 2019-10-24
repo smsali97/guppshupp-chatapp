@@ -45,7 +45,7 @@ public class StartPage extends AppCompatActivity {
 
 
         mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://" + ChatUtil.ANDROID_EMULATOR_LOCALHOST
-                + ":" + SERVER_PORT + "/ws/websocket");
+                + ":" + SERVER_PORT + "/ws");
 
         mStompClient.lifecycle().subscribe(lifecycleEvent -> {
             runOnUiThread(new Runnable() {

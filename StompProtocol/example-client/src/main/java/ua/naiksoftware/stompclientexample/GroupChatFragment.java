@@ -31,10 +31,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.jaiselrahman.filepicker.activity.FilePickerActivity;
+import com.jaiselrahman.filepicker.config.Configurations;
+import com.jaiselrahman.filepicker.model.MediaFile;
 
 import java.io.File;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +52,8 @@ import static ua.naiksoftware.stompclientexample.util.ChatUtil.ANDROID_EMULATOR_
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.SERVER_PORT;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.currentUsername;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.mStompClient;
+
+
 
 public class GroupChatFragment extends Fragment {
 

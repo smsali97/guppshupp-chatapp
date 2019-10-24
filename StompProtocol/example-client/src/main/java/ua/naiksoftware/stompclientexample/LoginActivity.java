@@ -169,7 +169,7 @@ public class LoginActivity extends AppCompatActivity {
             ChatUtil.mStompClient.send("/app/chat.register", new Gson().toJson(user2)).subscribe();
 
         ChatUtil.currentUsername = uname;
-        Intent intent = new Intent(LoginActivity.this, GroupChatActivity.class);
+        Intent intent = new Intent(LoginActivity.this, MainChatActivity.class);
         startActivity(intent);
         finish();
         }
