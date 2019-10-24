@@ -65,5 +65,5 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-s3:2.15.+'
     implementation ('com.amazonaws:aws-android-sdk-mobile-client:2.15.+@aar') { transitive = true }
     implementation ('com.amazonaws:aws-android-sdk-auth-userpools:2.15.+@aar') { transitive = true }
-    implementation 'com.github.jaiselrahman:FilePicker:1.2.2'
+    implementation 'com.github.angads25:filepicker:1.1.1'
 }

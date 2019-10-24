@@ -30,10 +30,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.gson.Gson;
-import com.jaiselrahman.filepicker.activity.FilePickerActivity;
-import com.jaiselrahman.filepicker.config.Configurations;
-import com.jaiselrahman.filepicker.model.MediaFile;
+import com.github.angads25.filepicker.model.DialogConfigs;
 
 import java.io.File;
 import java.net.URI;
@@ -292,49 +293,43 @@ public class GroupChatFragment extends Fragment {
 
 
     private void showChoosingFile() {
-        /*Intent intent = new Intent();
-        intent.setType("image/*, pdf/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);*/
-        //intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        Intent intent = new Intent(this.getContext(), FilePickerActivity.class);
-        intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
-                .setCheckPermission(true)
-                .setShowImages(true)
-                .enableImageCapture(true)
-                .setMaxSelection(1)
-                .setSkipZeroSizeFiles(true)
-                .build());
-        startActivityForResult(intent, CHOOSING_IMAGE_REQUEST);
-        //startActivityForResult(Intent.createChooser(intent, "Select File"),  CHOOSING_IMAGE_REQUEST);
+
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(DialogConfigs.DEFAULT_DIR);
+        properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
+        properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = null;
+
+        FilePickerDialog dialog = new FilePickerDialog(getContext(),properties);
+        dialog.setTitle("Select a File");
+        dialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(String[] files) {
+                //files is the array of the paths of files selected by the Application User.
+                Log.d("File picker file picked", files[0]);
+                s3.upload(new File(files[0]));
+            }
+        });
+        dialog.show();
     }
 
     public void onClick(View view) {
         int i = view.getId();
 
         if (i == R.id.file_button) {
+
             showChoosingFile();
-//        } else if (i == R.id.btn_upload) {
+         }
+//        else if (i == R.id.btn_upload) {
 //            uploadFile();
 //        } else if (i == R.id.btn_download) {
 //            downloadFile();
 //        }
         }
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CHOOSING_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            ArrayList<MediaFile> files = data.getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES);
-            Log.d("File picker result",  files.size() + "");
-            //fileUri = data.getData();
-            //File file = new File(fileUri.getPath());//create path from uri
-
-            //s3.upload(file);
-        }
-
-    }
 
 
 }
