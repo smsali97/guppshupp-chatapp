@@ -25,7 +25,7 @@ import com.server.spring.ws.api.model.User;
 import com.server.spring.ws.api.model.UserRepository;
 
 @Controller
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "*")
 public class ChatController {
 
 	@Autowired

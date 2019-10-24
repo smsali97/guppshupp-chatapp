@@ -8,7 +8,7 @@ public class ChatUtil {
 
     public static boolean isConnected = false;
 
-    public static final String ANDROID_EMULATOR_LOCALHOST = "10.0.2.2";
+    public static final String ANDROID_EMULATOR_LOCALHOST = "guppshppappcon-env.2ie7thu7d2.eu-central-1.elasticbeanstalk.com";
     public static final String SERVER_PORT = "8080";
 
     public static String currentUsername = "smsali97";
