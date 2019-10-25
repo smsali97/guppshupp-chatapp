@@ -62,12 +62,14 @@ public class S3Services {
         download(name,"appcon-storage",path);
     }
 
-    public void upload(File file, String bucket) {
+    public String[] upload(File file, String bucket) {
         TransferObserver uploadObserver = transferUtility.upload(
                             bucket,
                             file.getName()
                             ,file);
         Log.d(TAG, "upload: " + file.getName());
+        String result[] = new String[2];
+        result[0] = file.getName();
         // Attach a listener to the observer to get state update and progress notifications
         uploadObserver.setTransferListener(new TransferListener() {
 
@@ -101,8 +103,10 @@ public class S3Services {
                                         .withMethod(HttpMethod.GET)
                                         .withExpiration(expiration);
                         URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+                        //adding link to return array
+                        result[1] = url.toString();
+                        //Log.d("Pre-Signed URL: ", url.toString());
 
-                        Log.d("Pre-Signed URL: ", url.toString());
                     } catch (AmazonServiceException e) {
                         // The call was transmitted successfully, but Amazon S3 couldn't process
                         // it, so it returned an error response.
@@ -126,6 +130,12 @@ public class S3Services {
             }
 
         });
+        Log.d(TAG, "Bytes Transferred: " + uploadObserver.getBytesTransferred());
+        Log.d(TAG, "Bytes Total: " + uploadObserver.getBytesTotal());
+        transferIds.put(file.getName(), uploadObserver.getId());
+
+        Log.d("Pre-Signed URL: ", result[1] + "");
+        return result;
 
         // If you prefer to poll for the data, instead of attaching a
         // listener, check for the state and progress in the observer.
@@ -133,9 +143,7 @@ public class S3Services {
         //    // Handle a completed upload.
         //}
 
-        Log.d(TAG, "Bytes Transferred: " + uploadObserver.getBytesTransferred());
-        Log.d(TAG, "Bytes Total: " + uploadObserver.getBytesTotal());
-        transferIds.put(file.getName(), uploadObserver.getId());
+
     }
 
     private void download(String name,String bucket, String filepath) {
