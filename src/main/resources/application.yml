@@ -12,7 +12,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
 management:
   endpoint:
     health:
       show-details: ALWAYS
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

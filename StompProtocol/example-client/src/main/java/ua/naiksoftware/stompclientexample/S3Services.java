@@ -7,6 +7,8 @@ import android.util.Log;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.Callback;
 import com.amazonaws.mobile.client.UserStateDetails;
@@ -16,28 +18,32 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferService;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferType;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.net.URL;
 import java.util.HashMap;
 
 public class S3Services {
     Context myContext;
     private static final String TAG = GroupChatActivity.class.getSimpleName();
     HashMap<String,Integer> transferIds = new HashMap<String, Integer>();
-
+    AmazonS3Client s3Client;
     TransferUtility transferUtility;
 
     public S3Services(Context context,String KEY,String SECRET) {
         myContext = context;
         myContext.getApplicationContext().startService(new Intent(myContext.getApplicationContext(), TransferService.class));
         BasicAWSCredentials credentials = new BasicAWSCredentials(KEY, SECRET);
-        AmazonS3Client s3Client = new AmazonS3Client(credentials);
+        s3Client = new AmazonS3Client(credentials);
         transferUtility =
                 TransferUtility.builder()
                         .context(myContext.getApplicationContext())
@@ -61,7 +67,7 @@ public class S3Services {
                             bucket,
                             file.getName()
                             ,file);
-
+        Log.d(TAG, "upload: " + file.getName());
         // Attach a listener to the observer to get state update and progress notifications
         uploadObserver.setTransferListener(new TransferListener() {
 
@@ -74,6 +80,34 @@ public class S3Services {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
+
+                    Regions clientRegion = Regions.DEFAULT_REGION;
+
+                    try {/*
+                        AmazonS3Client s3Client_link = AmazonS3ClientBuilder.standard()
+                                .withRegion(clientRegion)
+                                .withCredentials(s3Client)
+                                .build();*/
+
+                        // Set the presigned URL to expire after one hour.
+                        java.util.Date expiration = new java.util.Date();
+                        long expTimeMillis = expiration.getTime();
+                        expTimeMillis += 1000 * 60 * 60 * 24;
+                        expiration.setTime(expTimeMillis);
+
+                        // Generate the presigned URL.
+                        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                                new GeneratePresignedUrlRequest(bucket, file.getName())
+                                        .withMethod(HttpMethod.GET)
+                                        .withExpiration(expiration);
+                        URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+
+                        Log.d("Pre-Signed URL: ", url.toString());
+                    } catch (AmazonServiceException e) {
+                        // The call was transmitted successfully, but Amazon S3 couldn't process
+                        // it, so it returned an error response.
+                        e.printStackTrace();
+                    }
                 }
             }
 
