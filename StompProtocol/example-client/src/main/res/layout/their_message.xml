@@ -39,6 +39,17 @@
         android:text="How are you doing? This is a long message that should probably wrap."
         />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="40dp"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp"
+        android:id="@+id/their_message_image"
+        android:padding="10dp"
+        android:layout_alignParentLeft="true"
+        />
+
     <TextView
         android:id="@+id/timestamp"
         android:layout_width="wrap_content"
@@ -48,15 +59,4 @@
         android:text=""
         android:textColor="#999999"
         android:textSize="13dp" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="40dp"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="16dp"
-        android:id="@+id/their_message_image"
-        android:padding="10dp"
-        android:layout_alignParentRight="true"
-        />
 </RelativeLayout>
