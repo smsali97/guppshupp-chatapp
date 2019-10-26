@@ -41,9 +41,7 @@ public class StartPage extends AppCompatActivity {
             @Override
             public void run() {
             }
-        }, 5000);
-
-
+        }, 6000);
 
         mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://" + ChatUtil.ANDROID_EMULATOR_LOCALHOST
                 + ":" + SERVER_PORT + "/ws");
