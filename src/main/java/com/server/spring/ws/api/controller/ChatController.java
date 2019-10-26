@@ -1,6 +1,7 @@
 package com.server.spring.ws.api.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -100,6 +101,12 @@ public class ChatController {
 		Optional<User> opt =userRepository.findById(username);
 		
 		return opt.isPresent() ? opt.get() : null;
+	}
+	
+	@RequestMapping(value = "/credentials", method = RequestMethod.GET)
+	@ResponseBody
+	public List<String> getCredentials() {
+		return Arrays.asList(new String[]{"AKIA47LH6J6I7EJAREGG","3j5ObIgtwO7RHRhvmFlqPMBc1pZLrZ18CphPkQPB"});
 	}
 	
 	@RequestMapping(value = "/chatMessages/public", method = RequestMethod.GET)

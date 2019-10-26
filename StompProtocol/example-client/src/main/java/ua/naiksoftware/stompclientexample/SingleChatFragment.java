@@ -26,15 +26,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.reactivex.Single;
 import ua.naiksoftware.R;
 import ua.naiksoftware.stompclientexample.model.ChatMessage;
 import ua.naiksoftware.stompclientexample.model.User;
@@ -50,12 +56,14 @@ public class SingleChatFragment extends Fragment {
 
     private ListView messagesView;
     ChatMessageAdapter messageAdapter;
+    S3Services s3;
 
     private PopupWindow window;
     private ImageButton messageButton;
     private  ImageButton fileButton;
     private  ImageButton stickerButton;
     EditText editText;
+    boolean s3Connected;
 
     private User receiver;
     private String TAG = "PRIVATE-CHAT";
@@ -64,7 +72,40 @@ public class SingleChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        String SECRET_KEY = "";
+        String ACCESS_KEY = "";
         View v = inflater.inflate(R.layout.single_chat_fragment,container,false);
+
+
+        SingleChatFragment sc = this;
+
+        String url = String.format("http://%s:%s/credentials",ANDROID_EMULATOR_LOCALHOST,SERVER_PORT);
+        StringRequest MyStringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                String SECRET_KEY, ACCESS_KEY;
+                String[] messages = new Gson().fromJson(response, String[].class);
+                SECRET_KEY = messages[0];
+                ACCESS_KEY = messages[1];
+
+                s3 = new S3Services(sc.getContext(),SECRET_KEY,ACCESS_KEY);
+
+            }
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast unsucmsg = Toast.makeText(getContext(), "Couldn't connnect to S3!", Toast.LENGTH_SHORT);
+                unsucmsg.show();
+            }
+
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> MyData = new HashMap<>();
+                return MyData;
+            }
+        };
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(getContext());
+        MyRequestQueue.add(MyStringRequest);
 
         editText = (EditText) v.findViewById(R.id.editText);
         messageButton = (ImageButton) v.findViewById(R.id.send_button);
@@ -74,16 +115,17 @@ public class SingleChatFragment extends Fragment {
         messagesView = (ListView) v.findViewById(R.id.messages_view);
         messagesView.setAdapter(messageAdapter);
         editText = (EditText) v.findViewById(R.id.editText);
+        fileButton = (ImageButton) v.findViewById(R.id.file_button);
 
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
 
         fab.setOnClickListener(this::showPrompt);
         messageButton.setOnClickListener(this::sendMessage);
         stickerButton.setOnClickListener(this::ShowPopupWindow);
+        fileButton.setOnClickListener(this::onClick);
 
         subscribeOncomingMessages();
-        Toast t = Toast.makeText(getContext(),"Click on floating chat bubble to begin chat..", Toast.LENGTH_SHORT);
-        t.setDuration(4);
+        Toast t = Toast.makeText(getContext(),"Click on floating chat bubble to begin chat..", Toast.LENGTH_LONG);
         t.show();
         return v;
     }
@@ -374,6 +416,63 @@ public class SingleChatFragment extends Fragment {
                         }
                     });
                 });
+    }
+
+    private void showChoosingFile() {
+
+        DialogProperties properties = new DialogProperties();
+        properties.selection_mode = DialogConfigs.SINGLE_MODE;
+        properties.selection_type = DialogConfigs.FILE_SELECT;
+        properties.root = new File(DialogConfigs.DEFAULT_DIR);
+        properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
+        properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+        properties.extensions = null;
+
+        FilePickerDialog dialog = new FilePickerDialog(getContext(),properties);
+        dialog.setTitle("Select a File");
+
+        SingleChatFragment scf = this;
+
+        View view = this.getView();
+        dialog.setDialogSelectionListener(new DialogSelectionListener() {
+            @Override
+            public void onSelectedFilePaths(String[] files) {
+                //files is the array of the paths of files selected by the Application User.
+                Log.d("File picker file picked", files[0]);
+                s3.upload(new File(files[0]),scf);
+            }
+        });
+        dialog.show();
+    }
+
+    public void onClick(View view) {
+        if (receiver == null) {
+            Toast t = Toast.makeText(getContext(),"Please select a person to send the text first",Toast.LENGTH_LONG);
+            t.show();
+            return;
+        }
+
+        int i = view.getId();
+
+        if (i == R.id.file_button) {
+
+            showChoosingFile();
+        }
+    }
+
+
+    public void addLink(String url, String name) {
+        String formattedUrl = String.format("Sent a file: <a href=%s>%s</a>",url,name);
+        User user = new User();
+        user.setUsername(currentUsername);
+        ChatMessage cm = new ChatMessage();
+        cm.setSender(user);
+        cm.setReceiver(receiver);
+        cm.setType(ChatMessage.MessageType.FILE);
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm dd/MM/yy");
+        cm.setTimestamp(df.format(new Date()));
+        cm.setContent(formattedUrl);
+        mStompClient.send("/app/chat.send-private", new Gson().toJson(cm)).subscribe();
     }
 
 }

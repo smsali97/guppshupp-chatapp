@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Timer;
@@ -59,6 +60,9 @@ public class StartPage extends AppCompatActivity {
                             Toast toast = Toast.makeText(getApplicationContext(), "Thora Gupp Shupp hojaye!", Toast.LENGTH_LONG);
                             View view = toast.getView();
                             view.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_IN);
+                            ((TextView)view.findViewById(android.R.id.message)).setTextColor(Color.WHITE);
+                            view.getBackground().setColorFilter(Color.parseColor("#c691ff"), PorterDuff.Mode.SRC_IN);
+
                             toast.show();
                             Log.d("TAG", "Stomp connection opened");
                             Intent intent = new Intent(StartPage.this, LoginActivity.class);

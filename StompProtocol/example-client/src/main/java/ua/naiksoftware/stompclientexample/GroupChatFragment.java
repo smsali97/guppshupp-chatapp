@@ -38,6 +38,7 @@ import com.github.angads25.filepicker.model.DialogConfigs;
 
 import java.io.File;
 import java.net.URI;
+import java.security.acl.Group;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,6 +48,7 @@ import java.util.Map;
 import ua.naiksoftware.R;
 import ua.naiksoftware.stompclientexample.model.ChatMessage;
 import ua.naiksoftware.stompclientexample.model.User;
+import ua.naiksoftware.stompclientexample.util.ChatUtil;
 
 import static android.app.Activity.RESULT_OK;
 import static ua.naiksoftware.stompclientexample.util.ChatUtil.ANDROID_EMULATOR_LOCALHOST;
@@ -73,6 +75,7 @@ public class GroupChatFragment extends Fragment {
     private String TAG = "PUBLIC-CHAT";
 
 
+
     private Uri fileUri;
     S3Services s3;
 
@@ -81,7 +84,36 @@ public class GroupChatFragment extends Fragment {
         View v = inflater.inflate(R.layout.group_chat, container, false);
         AWSMobileClient.getInstance().initialize(this.getContext()).execute();
 
-        s3 = new S3Services(this.getContext(),"AKIA47LH6J6I7EJAREGG","3j5ObIgtwO7RHRhvmFlqPMBc1pZLrZ18CphPkQPB");
+        GroupChatFragment gc = this;
+
+        String url = String.format("http://%s:%s/credentials",ANDROID_EMULATOR_LOCALHOST,SERVER_PORT);
+        StringRequest MyStringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                String[] messages = new Gson().fromJson(response, String[].class);
+                String SECRET_KEY, ACCESS_KEY;
+                SECRET_KEY = messages[0];
+                ACCESS_KEY = messages[1];
+
+                s3 = new S3Services(gc.getContext(),SECRET_KEY,ACCESS_KEY);
+            }
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast unsucmsg = Toast.makeText(getContext(), "Couldn't connnect to S3!", Toast.LENGTH_SHORT);
+                unsucmsg.show();
+            }
+
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> MyData = new HashMap<>();
+                return MyData;
+            }
+        };
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(getContext());
+        MyRequestQueue.add(MyStringRequest);
+
 
         editText = (EditText) v.findViewById(R.id.editText);
         messageButton = (ImageButton) v.findViewById(R.id.send_button);
@@ -255,7 +287,7 @@ public class GroupChatFragment extends Fragment {
                     mStompClient.send("/app/chat.send", new Gson().toJson(message)).subscribe();
                     window.dismiss();
 
-                    ;
+
                 }
 
             });
@@ -304,12 +336,16 @@ public class GroupChatFragment extends Fragment {
 
         FilePickerDialog dialog = new FilePickerDialog(getContext(),properties);
         dialog.setTitle("Select a File");
+
+        GroupChatFragment gcf = this;
+
+        View view = this.getView();
         dialog.setDialogSelectionListener(new DialogSelectionListener() {
             @Override
             public void onSelectedFilePaths(String[] files) {
                 //files is the array of the paths of files selected by the Application User.
                 Log.d("File picker file picked", files[0]);
-                s3.upload(new File(files[0]));
+                s3.upload(new File(files[0]),gcf);
             }
         });
         dialog.show();
@@ -322,12 +358,22 @@ public class GroupChatFragment extends Fragment {
 
             showChoosingFile();
          }
-//        else if (i == R.id.btn_upload) {
-//            uploadFile();
-//        } else if (i == R.id.btn_download) {
-//            downloadFile();
-//        }
-        }
+    }
+
+
+    public void addLink(String url, String name) {
+        String formattedUrl = String.format("<a href=%s style=\"color:#FFFFFF;\">%s</a>",url,name);
+
+        User user = new User();
+        user.setUsername(currentUsername);
+        ChatMessage cm = new ChatMessage();
+        cm.setSender(user);
+        cm.setType(ChatMessage.MessageType.FILE);
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm dd/MM/yy");
+        cm.setTimestamp(df.format(new Date()));
+        cm.setContent(formattedUrl);
+        mStompClient.send("/app/chat.send", new Gson().toJson(cm)).subscribe();
+    }
 
 
 

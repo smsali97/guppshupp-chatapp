@@ -6,6 +6,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,6 +70,11 @@ public class ChatMessageAdapter  extends BaseAdapter {
 
                 if (message.getType().equals(ChatMessage.MessageType.CHAT))
                 holder.messageBody.setText(message.getContent());
+                else if (message.getType().equals(ChatMessage.MessageType.FILE)) {
+                    holder.messageBody.setText(Html.fromHtml(message.getContent()));
+                    holder.messageBody.setTextColor(Color.WHITE);
+                    holder.messageBody.setMovementMethod(LinkMovementMethod.getInstance());
+                }
                 else if (message.getType().equals(ChatMessage.MessageType.STICKER)) {
                     holder.messageBody.setText("");
                     holder.messageBody.setBackgroundResource(android.R.color.transparent);
@@ -97,6 +104,12 @@ public class ChatMessageAdapter  extends BaseAdapter {
                 holder.name.setText(message.getSender().getUsername());
                 if (message.getType().equals(ChatMessage.MessageType.CHAT))
                     holder.messageBody.setText(message.getContent());
+                else if (message.getType().equals(ChatMessage.MessageType.FILE)) {
+                    holder.messageBody.setText(Html.fromHtml(message.getContent()));
+                    holder.messageBody.setTextColor(Color.WHITE);
+
+                    holder.messageBody.setMovementMethod(LinkMovementMethod.getInstance());
+                }
                 else if (message.getType().equals(ChatMessage.MessageType.STICKER)) {
                     holder.messageBody.setText("");
                     holder.messageBody.setBackgroundResource(android.R.color.transparent);

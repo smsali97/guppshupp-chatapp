@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
@@ -30,6 +33,7 @@ import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.net.URL;
+import java.security.acl.Group;
 import java.util.HashMap;
 
 public class S3Services {
@@ -54,15 +58,15 @@ public class S3Services {
 
 
 
-    public void upload(File file) {
-        upload(file,"appcon-storage");
+    public void upload(File file, Fragment fragment) {
+        upload(file,"appcon-storage", fragment);
     }
 
     public void downpload(String name, String path) {
         download(name,"appcon-storage",path);
     }
 
-    public String[] upload(File file, String bucket) {
+    public String[] upload(File file, String bucket, Fragment fragment) {
         TransferObserver uploadObserver = transferUtility.upload(
                             bucket,
                             file.getName()
@@ -105,6 +109,13 @@ public class S3Services {
                         URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
                         //adding link to return array
                         result[1] = url.toString();
+
+                        if (fragment instanceof GroupChatFragment)
+                            ((GroupChatFragment)fragment).addLink(result[1],result[0]);
+                        else if (fragment instanceof SingleChatFragment)
+                            ((SingleChatFragment)fragment).addLink(result[1],result[0]);
+
+
                         //Log.d("Pre-Signed URL: ", url.toString());
 
                     } catch (AmazonServiceException e) {

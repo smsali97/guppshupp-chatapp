@@ -26,7 +26,7 @@ public class ChatMessage  {
     }
 
     public enum MessageType {
-        CHAT, LEAVE, JOIN, IMAGE, STICKER
+        CHAT, LEAVE, JOIN, FILE, STICKER
     }
 
     public String getContent() {
