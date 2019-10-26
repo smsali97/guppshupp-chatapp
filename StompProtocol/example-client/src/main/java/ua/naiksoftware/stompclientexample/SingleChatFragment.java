@@ -410,6 +410,7 @@ public class SingleChatFragment extends Fragment {
                                 SimpleDateFormat df = new SimpleDateFormat("HH:mm dd/MM/yy");
                                 cm.setTimestamp(df.format(new Date()));
                             }
+                            cm.setTimestamp(ChatUtil.getCurrentTimeinKarachi(cm.getTimestamp()));
                             messageAdapter.add(cm);
                             // scroll the ListView to the last added element
                             messagesView.setSelection(messagesView.getCount() - 1);

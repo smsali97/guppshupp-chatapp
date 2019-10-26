@@ -18,28 +18,29 @@
     android:textSize="18dp"
     android:layout_alignParentRight="true"
     android:text="Placeholder message"
-    />
+    >
+    </TextView>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="40dp"
         android:id="@+id/my_message_image"
-        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
-        />
-
+        android:width="190dp"
+        android:height="120dp"
+         />
     <TextView
         android:id="@+id/timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:layout_below="@id/message_body"
+        android:layout_below="@id/my_message_image"
         android:text=""
         android:textColor="#999999"
         android:textSize="13dp"
         android:layout_alignParentRight="true"
         />
+
 
 
 

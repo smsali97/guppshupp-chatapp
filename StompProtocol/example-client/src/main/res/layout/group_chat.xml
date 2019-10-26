@@ -37,8 +37,8 @@
 
         <ImageButton
             android:id="@+id/file_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:scaleType="fitCenter"
             android:padding="20dp"
@@ -51,19 +51,20 @@
             android:layout_height="36dp"
             android:layout_gravity="center"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/sticker"
+            android:background="@drawable/typography"
             android:onClick="ShowPopupWindow"
             android:padding="20dp"
             android:scaleType="fitCenter" />
+
         <ImageButton
             android:id="@+id/send_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_gravity="center"
-            android:scaleType="fitCenter"
-            android:padding="20dp"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/paper_plane"
-            />
+            android:background="@drawable/send"
+            android:backgroundTint="@color/colorAccent"
+            android:padding="20dp"
+            android:scaleType="fitCenter" />
     </LinearLayout>
 </LinearLayout>
