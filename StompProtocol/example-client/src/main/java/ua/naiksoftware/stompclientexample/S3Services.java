@@ -108,7 +108,7 @@ public class S3Services {
                                         .withExpiration(expiration);
                         URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
                         //adding link to return array
-                        result[1] = url.toString();
+                        result[1] = url.toString().replaceAll(" ", "_");
 
                         if (fragment instanceof GroupChatFragment)
                             ((GroupChatFragment)fragment).addLink(result[1],result[0]);
