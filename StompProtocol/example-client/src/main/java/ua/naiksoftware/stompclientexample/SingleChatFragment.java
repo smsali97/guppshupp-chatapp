@@ -9,13 +9,16 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -31,7 +34,6 @@ import com.github.angads25.filepicker.model.DialogConfigs;
 import com.github.angads25.filepicker.model.DialogProperties;
 import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -40,7 +42,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.reactivex.Single;
 import ua.naiksoftware.R;
 import ua.naiksoftware.stompclientexample.model.ChatMessage;
 import ua.naiksoftware.stompclientexample.model.User;
@@ -63,7 +64,6 @@ public class SingleChatFragment extends Fragment {
     private  ImageButton fileButton;
     private  ImageButton stickerButton;
     EditText editText;
-    boolean s3Connected;
 
     private User receiver;
     private String TAG = "PRIVATE-CHAT";
@@ -475,5 +475,7 @@ public class SingleChatFragment extends Fragment {
         cm.setContent(formattedUrl);
         mStompClient.send("/app/chat.send-private", new Gson().toJson(cm)).subscribe();
     }
+
+
 
 }

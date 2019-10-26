@@ -47,7 +47,10 @@
         android:paddingHorizontal="16dp"
         android:id="@+id/their_message_image"
         android:padding="10dp"
+        android:layout_below="@id/message_body"
         android:layout_alignParentLeft="true"
+        android:width="190dp"
+        android:height="120dp"
         />
 
     <TextView
@@ -55,8 +58,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:layout_below="@id/message_body"
+        android:layout_below="@id/their_message_image"
         android:text=""
         android:textColor="#999999"
-        android:textSize="13dp" />
+        android:textSize="13dp"
+        android:layout_alignParentLeft="true"
+        />
 </RelativeLayout>

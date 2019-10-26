@@ -25,6 +25,7 @@
         android:id="@+id/my_message_image"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_below="@id/message_body"
         android:layout_alignParentRight="true"
         android:width="190dp"
         android:height="120dp"
