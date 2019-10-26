@@ -81,8 +81,8 @@ public class S3Services {
             public void onStateChanged(int id, TransferState state) {
                 if (TransferState.COMPLETED == state) {
                     Context context = myContext.getApplicationContext();
-                    CharSequence text = "Upload Finished!";
-                    int duration = Toast.LENGTH_SHORT;
+                    CharSequence text = "Upload Finished! This will last one day in our servers.";
+                    int duration = Toast.LENGTH_LONG;
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();

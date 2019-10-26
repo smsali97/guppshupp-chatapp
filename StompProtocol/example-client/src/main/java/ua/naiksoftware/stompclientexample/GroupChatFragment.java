@@ -362,7 +362,7 @@ public class GroupChatFragment extends Fragment {
 
 
     public void addLink(String url, String name) {
-        String formattedUrl = String.format("<a href=%s style=\"color:#FFFFFF;\">%s</a>",url,name);
+        String formattedUrl = String.format("Sent a file: <a href=%s>%s</a>",url,name);
 
         User user = new User();
         user.setUsername(currentUsername);

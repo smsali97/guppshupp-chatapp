@@ -91,6 +91,8 @@ public class StartPage extends AppCompatActivity {
 
                             ChatUtil.isConnected = false;
                             Log.d("TAG", "Stomp connection closed");
+
+                            mStompClient.reconnect();
                             break;
                     }
                 }
