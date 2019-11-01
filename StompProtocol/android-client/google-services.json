@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "142874059713",
+    "firebase_url": "https://guppshupp-1742e.firebaseio.com",
+    "project_id": "guppshupp-1742e",
+    "storage_bucket": "guppshupp-1742e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142874059713:android:a16503b3f9123497ad0540",
+        "android_client_info": {
+          "package_name": "com.guppshupp.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "142874059713-chi03eglmogmkpdck0a6nt4oi6cf75f2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYFgZtOELHkM-QJtGeaFqpCvBRyvCmSz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "142874059713-chi03eglmogmkpdck0a6nt4oi6cf75f2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

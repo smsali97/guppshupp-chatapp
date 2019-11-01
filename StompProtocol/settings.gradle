@@ -1,1 +1,1 @@
-include ':example-client', ':lib', ':test-server'
+include ':example-client', ':lib', ':test-server',':android-client'

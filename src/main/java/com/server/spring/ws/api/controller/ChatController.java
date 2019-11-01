@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 import com.server.spring.ws.api.model.ChatMessage;
 import com.server.spring.ws.api.model.ChatMessage.MessageType;
 import com.server.spring.ws.api.model.ChatRepository;
@@ -60,7 +62,10 @@ public class ChatController {
 		
 		ChatMessage newChatMessage = chatRepository.save(chatMessage);
 		
+		
 		return newChatMessage;
+		
+		
 		
 	}
 	
