@@ -39,12 +39,12 @@ mvn clean package
 Run the Android version with your Emulator of choice
 
 ## Diagrams
-![Component Architecture](media/Component Architecture.png)
+![Component Architecture](media/Component%20Architecture.png)
 
 
 
-![Server UML](media/Server UML.jpeg)
-![Client UML](media/Client UML.jpeg)
+![Server UML](media/Server%20UML.jpeg)
+![Client UML](media/Client%20UML.jpeg)
 
 ## Versioning
 
@@ -67,4 +67,4 @@ This Application has been licensed under
 
 ## See Also
 
-- [Application Architecture]: /Application_Architecture.md	"Application Architecture Report"
+- [Application Architecture]: Application_Architecture.md	"Application Architecture Report"
