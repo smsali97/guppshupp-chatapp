@@ -54,17 +54,17 @@ Currently at Version 1.0.0 (Beta Release)
 
 This Application has been licensed under 
 
-[Apache 2.0]: LICENSE.md	"Apache License"
+[Apache 2.0 License](LICENSE.md)
 
 ## Acknowledgements
 
-- [Flaticon]: www.flaticon.com	"Flaticon for the usage of icons in our application"
+- [Flaticon](www.flaticon.com) for the usage of icons in our application
 
-- [NaikSoftware]: www.github.com/NaikSoftware/StompProtocolAndroid	"We used NaikSoftware's Stomp Protocol Client Starter code  for communicating with Android to the Server "
+- We used [NaikSoftware's](www.github.com/NaikSoftware/StompProtocolAndroid) Stomp Protocol Client Starter code  for communicating with Android to the Server
 
-- [Android Filepicker]: www.github.com/Angads25/android-filepicker	"Android Filepicker by Angads25"
+- [Android Filepicker](www.github.com/Angads25/android-filepicker) by Angads25
 
 
 ## See Also
 
-- [Application Architecture]: Application_Architecture.md	"Application Architecture Report"
+- [Application Architecture](Application_Architecture.md) Report
