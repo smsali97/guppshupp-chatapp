@@ -1,6 +1,6 @@
 # *Guppshupp* Chat Application
 
-![GuppShupp Chat App](StompProtocol\android-client\src\main\res\drawable\loader.gif)
+![GuppShupp Chat App](StompProtocol/android-client/src/main/res/drawable/loader.gif)
 
 ## Getting Started
 
@@ -39,10 +39,12 @@ mvn clean package
 Run the Android version with your Emulator of choice
 
 ## Diagrams
-![Component Architecture](media\Component Architecture.png)
+![Component Architecture](media/Component Architecture.png)
 
-![Server UML](media\Server UML.jpeg)
-![Client UML](media\Client UML.jpeg)
+
+
+![Server UML](media/Server UML.jpeg)
+![Client UML](media/Client UML.jpeg)
 
 ## Versioning
 
@@ -56,13 +58,13 @@ This Application has been licensed under
 
 ## Acknowledgements
 
-- [Flaticon]: https://www.flaticon.com	"Flaticon for the usage of icons in our application"
+- [Flaticon]: www.flaticon.com	"Flaticon for the usage of icons in our application"
 
-- [NaikSoftware]: https://github.com/NaikSoftware/StompProtocolAndroid	"We used NaikSoftware's Stomp Protocol Client Starter code  for communicating with Android to the Server "
+- [NaikSoftware]: www.github.com/NaikSoftware/StompProtocolAndroid	"We used NaikSoftware's Stomp Protocol Client Starter code  for communicating with Android to the Server "
 
-- [Android Filepicker]: https://github.com/Angads25/android-filepicker	"Android Filepicker by Angads25"
+- [Android Filepicker]: www.github.com/Angads25/android-filepicker	"Android Filepicker by Angads25"
 
 
 ## See Also
 
-- [Application Architecture]: Application_Architecture.md	"Application Architecture Report"
+- [Application Architecture]: /Application_Architecture.md	"Application Architecture Report"
