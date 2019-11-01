@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -35,6 +36,11 @@ public class ChatController {
 	UserRepository userRepository;
 	@Autowired
 	ChatRepository chatRepository;
+	
+	@Value("${aws.ACCESS_KEY}")
+	  String accessKey;
+	@Value("${aws.SECRET_KEY}")
+	  String secretKey;
 	
 	@MessageMapping("/chat.register")
 	@SendTo("/topic/public")
@@ -111,7 +117,7 @@ public class ChatController {
 	@RequestMapping(value = "/credentials", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getCredentials() {
-		return Arrays.asList(new String[]{"AKIA47LH6J6I7EJAREGG","3j5ObIgtwO7RHRhvmFlqPMBc1pZLrZ18CphPkQPB"});
+		return Arrays.asList(new String[]{secretKey,accessKey});
 	}
 	
 	@RequestMapping(value = "/chatMessages/public", method = RequestMethod.GET)
